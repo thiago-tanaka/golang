@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/src/config"
 	"api/src/router"
 	"fmt"
 	"log"
@@ -8,6 +9,11 @@ import (
 )
 
 func main() {
+
+	config.LoadConfiguration()
+
+	fmt.Println("Server is running on port", config.Port)
+
 	fmt.Println("rodando api")
 
 	r := router.GenerateRoutes()
