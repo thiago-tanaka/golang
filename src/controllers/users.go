@@ -3,42 +3,41 @@ package controllers
 import (
 	"api/src/database"
 	"api/src/models"
-	"api/src/repositories"
+	"api/src/responses"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		responses.Error(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	var user models.User
 
 	if err = json.Unmarshal(requestBody, &user); err != nil {
-		log.Fatal(err)
+		responses.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		log.Fatal(err)
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	repository := repositories.NewUserRepository(db)
-
-	userId, err := repository.Create(user)
+	defer db.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 
 	// return created user id with success message, like this: "user created with id: 1"
-	w.Write([]byte(fmt.Sprintf("user created with id: %d", userId)))
-
+	responses.JSON(w, http.StatusCreated, user)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
