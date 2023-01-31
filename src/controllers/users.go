@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/octoper/go-ray"
 	"io"
 	"net/http"
 	"strconv"
@@ -57,8 +56,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	ray.Ray(params)
-
 	fmt.Sprintln(params)
 
 	userID, err := strconv.ParseUint(params["id"], 10, 64)
