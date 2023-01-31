@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	ConnectionDB = "root:root@/devbook?charset=utf8&parseTime=True&loc=Local"
+	ConnectionDB = ""
 	Port         = 0
+	SecretKey    []byte
 )
 
 func LoadConfiguration() {
@@ -24,4 +25,6 @@ func LoadConfiguration() {
 	}
 
 	ConnectionDB = os.Getenv("MYSQL_CONNECTION")
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
