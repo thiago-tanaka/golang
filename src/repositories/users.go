@@ -32,3 +32,42 @@ func (u Users) Create(user models.User) (uint64, error) {
 
 	return uint64(lastID), nil
 }
+
+func (u Users) Search(nameOrNick string) ([]models.User, error) {
+	nameOrNick = "%" + nameOrNick + "%"
+	rows, err := u.db.Query("select id, name, nick, email, created_at from users where name like ? or nick like ?", nameOrNick, nameOrNick)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		if err = rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (u Users) GetByID(userID uint64) (models.User, error) {
+	row, err := u.db.Query("select id, name, nick, email, created_at from users where id = ?", userID)
+
+	if err != nil {
+		return models.User{}, err
+	}
+	defer row.Close()
+
+	var user models.User
+	if row.Next() {
+		if err = row.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+
+}

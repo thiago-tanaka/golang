@@ -3,10 +3,16 @@ package controllers
 import (
 	"api/src/database"
 	"api/src/models"
+	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
+	"fmt"
+	"github.com/gorilla/mux"
+	"github.com/octoper/go-ray"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +40,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	repository := repositories.NewUserRepository(db)
+
+	_, err = repository.Create(user)
+
 	defer db.Close()
 
 	if err != nil {
@@ -46,11 +56,56 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Buscando um usuário"))
+	params := mux.Vars(r)
+	ray.Ray(params)
+
+	fmt.Sprintln(params)
+
+	userID, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	repository := repositories.NewUserRepository(db)
+	user, err := repository.GetByID(userID)
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, user)
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Buscando todos os usuários"))
+
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	users, err := repository.Search(nameOrNick)
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, users)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
