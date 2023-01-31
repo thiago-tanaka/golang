@@ -11,4 +11,5 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/octoper/go-ray v0.1.5 // indirect
+	golang.org/x/crypto v0.5.0 // indirect
 )
