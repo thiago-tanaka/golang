@@ -1,8 +1,8 @@
 CREATE database IF NOT EXISTS `devbook`;
 USE `devbook`;
 
+drop table if exists `devbook`.`posts`;
 drop table if exists `devbook`.`followers`;
-
 drop table if exists `devbook`.`users`;
 
 CREATE TABLE `devbook`.`users` (
@@ -34,3 +34,14 @@ values
     (1, 2),
     (3, 1),
     (1, 3);
+
+
+CREATE TABLE `devbook`.`posts` (
+                                  `id` int NOT NULL AUTO_INCREMENT primary key,
+                                  `title` varchar(255) NOT NULL,
+                                  `content` text NOT NULL,
+                                    `author_id` int NOT NULL,
+                                    foreign key (author_id) references users(id) on delete cascade,
+                                    `likes` int NOT NULL DEFAULT 0,
+                                    `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
