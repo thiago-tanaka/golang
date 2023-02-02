@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
+	"api/src/security"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -320,6 +321,68 @@ func GetFollowing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusOK, following)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	tokenUserId, err := auth.ExtractUserId(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != tokenUserId {
+		responses.Error(w, http.StatusForbidden, errors.New("you can't update a user that is not yours"))
+		return
+	}
+
+	var password models.Password
+
+	err = json.NewDecoder(r.Body).Decode(&password)
+	if err != nil {
+		responses.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	repository := repositories.NewUserRepository(db)
+	passwordDB, err := repository.GetPassword(userID)
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	newPassword, err := security.Hash(password.New)
+
+	if err = security.Verify(passwordDB, password.Old); err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = repository.UpdatePassword(userID, string(newPassword)); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
 }
 
 // Path: appil_sns\src\router\routes\user.go
