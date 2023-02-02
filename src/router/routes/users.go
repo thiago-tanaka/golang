@@ -54,4 +54,10 @@ var usersRoutes = []Rota{
 		Function:    controllers.GetFollowers,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{id}/following",
+		Method:      http.MethodGet,
+		Function:    controllers.GetFollowing,
+		RequireAuth: true,
+	},
 }
