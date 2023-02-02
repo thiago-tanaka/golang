@@ -36,4 +36,10 @@ var usersRoutes = []Rota{
 		Function:    controllers.DeleteUser,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{id}/follow",
+		Method:      http.MethodPost,
+		Function:    controllers.FollowUser,
+		RequireAuth: true,
+	},
 }
