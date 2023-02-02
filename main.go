@@ -14,8 +14,6 @@ func main() {
 
 	fmt.Println("Server is running on port", config.Port)
 
-	fmt.Println("rodando api")
-
 	r := router.GenerateRoutes()
 
 	log.Fatal(http.ListenAndServe(":5000", r))
