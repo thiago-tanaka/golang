@@ -45,3 +45,9 @@ CREATE TABLE `devbook`.`posts` (
                                     `likes` int NOT NULL DEFAULT 0,
                                     `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into posts (title, content, author_id)
+values
+    ('Post 1', 'Post 1 content', 1),
+    ('Post 2', 'Post 2 content', 9),
+    ('Post 3', 'Post 3 content', 9);
