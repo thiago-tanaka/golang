@@ -150,3 +150,17 @@ func (p Post) LikePost(postId uint64) error {
 
 	return nil
 }
+
+func (p Post) DislikePost(postId uint64) error {
+	statement, err := p.db.Prepare("update posts set likes = case when likes > 0 then likes - 1 else 0 end where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(postId); err != nil {
+		return err
+	}
+
+	return nil
+}

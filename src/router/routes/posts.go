@@ -48,4 +48,10 @@ var postsRoutes = []Rota{
 		Function:    controllers.LikePost,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/posts/{id}/dislike",
+		Method:      http.MethodPost,
+		Function:    controllers.DislikePost,
+		RequireAuth: true,
+	},
 }
