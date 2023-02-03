@@ -49,5 +49,5 @@ CREATE TABLE `devbook`.`posts` (
 insert into posts (title, content, author_id)
 values
     ('Post 1', 'Post 1 content', 1),
-    ('Post 2', 'Post 2 content', 9),
-    ('Post 3', 'Post 3 content', 9);
+    ('Post 2', 'Post 2 content',2),
+    ('Post 3', 'Post 3 content', 3);

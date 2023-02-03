@@ -82,3 +82,17 @@ func (p Post) GetPosts(userID uint64) ([]models.Post, error) {
 
 	return posts, nil
 }
+
+func (p Post) Update(postId uint64, post models.Post) error {
+	statement, err := p.db.Prepare("update posts set title = ?, content = ? where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(post.Title, post.Content, postId); err != nil {
+		return err
+	}
+
+	return nil
+}

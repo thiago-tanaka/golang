@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 )
@@ -31,7 +30,6 @@ func (post *Post) validate() error {
 	if post.Title == "" {
 		return errors.New("Title is required")
 	}
-	fmt.Println("*" + post.Content + "*")
 
 	if post.Content == "" {
 		return errors.New("Content is required")
