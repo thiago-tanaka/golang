@@ -32,3 +32,26 @@ func (p Post) Create(post models.Post) (uint64, error) {
 
 	return uint64(lastID), nil
 }
+
+func (p Post) GetPost(postId uint64) (models.Post, error) {
+	row, err := p.db.Query(`
+		select p.*, u.nick from posts p
+		inner join users u on u.id = p.author_id
+		where p.id = ?
+	`, postId)
+
+	if err != nil {
+		return models.Post{}, err
+	}
+
+	defer row.Close()
+
+	var post models.Post
+	if row.Next() {
+		if err = row.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID, &post.Likes, &post.CreatedAt, &post.AuthorNick); err != nil {
+			return models.Post{}, err
+		}
+	}
+
+	return post, nil
+}
