@@ -136,3 +136,17 @@ func (p Post) GetPostsByUser(userID uint64) ([]models.Post, error) {
 
 	return posts, nil
 }
+
+func (p Post) LikePost(postId uint64) error {
+	statement, err := p.db.Prepare("update posts set likes = likes + 1 where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(postId); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -42,4 +42,10 @@ var postsRoutes = []Rota{
 		Function:    controllers.GetPostsByUser,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/posts/{id}/like",
+		Method:      http.MethodPost,
+		Function:    controllers.LikePost,
+		RequireAuth: true,
+	},
 }
